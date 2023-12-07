@@ -146,17 +146,14 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// New endpoint to get usertype
 app.get("/getUserType", authenticateToken, async (req, res) => {
   try {
-    // Assuming you have the user ID in the request object after authentication
     const user = await userModel.findById(req.user.id);
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Assuming usertype is a field in your user model
     const usertype = user.usertype;
 
     res.json({ usertype });
@@ -178,20 +175,6 @@ app.get("/getUsers", async (req, res) => {
   }
 });
 
-
-/*app.post('/createTenant', async (req, res) => {
-  const tenant = req.body;
-
-  try {
-    const newTenant = new userModel(tenant);
-    await newTenant.save();
-
-    res.json({ success: true, message: 'Tenant created successfully.' });
-  } catch (error) {
-    console.error('Error creating tenant:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
-  }
-});*/
 
 
 app.post('/createTenant', async (req, res) => {
@@ -232,7 +215,6 @@ app.get('/getMaintenanceRequestsByUserid/:userID', async (req, res) => {
   const { userID } = req.params;
 
   try {
-    // Use the findOne method to find maintenance requests by apartment number
     const result = await maintenanceRequestModel.find({ userid: userID });
     if (result) {
       res.json(result);
@@ -348,18 +330,14 @@ app.get('/checkApartmentOccupied/:apartmentnumber', async (req, res) => {
   const { apartmentnumber } = req.params;
 
   try {
-    // Check if the apartment number already exists in the database
     const existingTenant = await userModel.findOne({ apartmentnumber });
 
     if (existingTenant) {
-      // Apartment is occupied
       res.json({ occupied: true });
     } else {
-      // Apartment is available
       res.json({ occupied: false });
     }
   } catch (error) {
-    // Handle database error
     console.error(error);
     res.status(500).json({ success: false, message: {error} });
   }
